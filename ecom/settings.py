@@ -31,7 +31,7 @@ SECRET_KEY = os.environ.get('KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['https://ecom-lszh.onrender.com/']
+ALLOWED_HOSTS = ['ecom-lszh.onrender.com']
 
 
 # Application definition
