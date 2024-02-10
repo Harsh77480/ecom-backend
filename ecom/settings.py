@@ -29,7 +29,7 @@ SECRET_KEY = os.environ.get('KEY')
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['ecom-lszh.onrender.com','127.0.0.1']
 
@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'items',
 
     #third party 
+    'corsheaders',
     'rest_framework',
     'whitenoise.runserver_nostatic',
 
@@ -55,6 +56,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+     'corsheaders.middleware.CorsMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',    
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -132,16 +134,25 @@ USE_TZ = True
 
 # settings.py
 
+STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+WHITENOISE_MAX_AGE = 31536000
+# STATICFILES_DIRS = [
+#     os.path.join(BASE_DIR,"static")
+# ]
+
 STORAGES = {
+        "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
     "staticfiles": {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
 }
 
-STATIC_URL = 'static/'
-STATIC_ROOT = BASE_DIR / 'staticfiles'
-WHITENOISE_MAX_AGE = 31536000
 
+
+CORS_ALLOW_ALL_ORIGINS = True
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
