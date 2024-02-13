@@ -54,6 +54,7 @@ class GetItemList(generics.ListAPIView) :
         if brand_filter:
             filters = filters | Q(brand_filter__in=BrandValues.objects.filter(title__in=brand_filter))
 
+        sort_type = self.request.GET.get('sort_type', None)
 
         filter_data = {
         "occasion_filter": OccasionValuesSerializer(OccasionValues.objects.all(),context={'request': request},many=True).data,
@@ -64,7 +65,20 @@ class GetItemList(generics.ListAPIView) :
         "brand_filter": BrandValuesSerializer(BrandValues.objects.all(),context={'request': request}, many=True).data,
         "color_filter": ColorValuesSerializer(ColorValues.objects.all(),context={'request': request}, many=True).data,}
             
-        serializer = ItemSerializer(queryset.filter(filters).order_by("-created_at"),context={'request': request}, many=True)
-        return Response({"items_list":serializer.data , "filter_data" : filter_data})
+        sort_data = {
+            "Newest" : { "is_applied" : sort_type == "Newest" },
+            "Price_Asc" : { "is_applied" :  sort_type == "Price_Asc"},
+            "Price_Desc" : { "is_applied" : sort_type == "Price_Desc"},
+        }
+
+        if sort_type == "Price_Asc" :
+            queryset = queryset.filter(filters).order_by("discount_price")
+        elif sort_type == "Price_Desc" :
+            queryset = queryset.filter(filters).order_by("-discount_price")
+        else :
+            queryset = queryset.filter(filters).order_by("-created_at")
+
+        serializer = ItemSerializer(queryset,context={'request': request}, many=True)
+        return Response({"items_list":serializer.data , "filter_data" : filter_data , "sort_data" : sort_data})
     
 
