@@ -28,43 +28,44 @@ class GetItemList(generics.ListAPIView) :
         filters = Q()
         occasion_filters = self.request.GET.getlist('occasion_filter', None)
         if occasion_filters : 
-            filters = filters | Q(occasion_filter__in = OccasionValues.objects.filter(title__in=occasion_filters))
+            filters = filters & Q(occasion_filter__in = OccasionValues.objects.filter(title__in=occasion_filters))
 
         color_filters = self.request.GET.getlist('color_filter', None)
         if color_filters:
-            filters = filters | Q(color_filter__in=ColorValues.objects.filter(title__in=color_filters))
+            filters = filters & Q(color_filter__in=ColorValues.objects.filter(title__in=color_filters))
         
         pattern_filter = self.request.GET.getlist('pattern_filter', None)
         if pattern_filter:
-            filters = filters | Q(pattern_filter__in=PatternValues.objects.filter(title__in=pattern_filter))
+            filters = filters & Q(pattern_filter__in=PatternValues.objects.filter(title__in=pattern_filter))
         #------already tested with above fields 
 
         fabric_filter = self.request.GET.getlist('fabric_filter', None)
         if fabric_filter : 
-            filters = filters | Q(fabric_filter__in = FabricValues.objects.filter(title__in=fabric_filter))
+            filters = filters & Q(fabric_filter__in = FabricValues.objects.filter(title__in=fabric_filter))
 
         season_filter = self.request.GET.getlist('season_filter', None)
         if season_filter:
-            filters = filters | Q(season_filter__in=SeasonValues.objects.filter(title__in=season_filter))
+            filters = filters & Q(season_filter__in=SeasonValues.objects.filter(title__in=season_filter))
 
         sleeve_length_filter = self.request.GET.getlist('sleeve_length_filter', None)
         if sleeve_length_filter:
-            filters = filters | Q(sleeve_length_filter__in=SleeveLengthValues.objects.filter(title__in=sleeve_length_filter))
+            filters = filters & Q(sleeve_length_filter__in=SleeveLengthValues.objects.filter(title__in=sleeve_length_filter))
 
         brand_filter = self.request.GET.getlist('brand_filter', None)
         if brand_filter:
-            filters = filters | Q(brand_filter__in=BrandValues.objects.filter(title__in=brand_filter))
+            filters = filters & Q(brand_filter__in=BrandValues.objects.filter(title__in=brand_filter))
 
         sort_type = self.request.GET.get('sort_type', None)
 
         filter_data = {
-        "occasion_filter": OccasionValuesSerializer(OccasionValues.objects.all(),context={'request': request},many=True).data,
+        "color_filter": ColorValuesSerializer(ColorValues.objects.all(),context={'request': request}, many=True).data,
+        "brand_filter": BrandValuesSerializer(BrandValues.objects.all(),context={'request': request}, many=True).data,
         "fabric_filter": FabricValuesSerializer(FabricValues.objects.all(),context={'request': request}, many=True).data,
         "pattern_filter": PatternValuesSerializer(PatternValues.objects.all(),context={'request': request}, many=True).data,
-        "season_filter": SeasonValuesSerializer(SeasonValues.objects.all(),context={'request': request}, many=True).data,
         "sleeve_length_filter": SleeveLengthValuesSerializer(SleeveLengthValues.objects.all(),context={'request': request}, many=True).data,
-        "brand_filter": BrandValuesSerializer(BrandValues.objects.all(),context={'request': request}, many=True).data,
-        "color_filter": ColorValuesSerializer(ColorValues.objects.all(),context={'request': request}, many=True).data,}
+        "occasion_filter": OccasionValuesSerializer(OccasionValues.objects.all(),context={'request': request},many=True).data,
+        "season_filter": SeasonValuesSerializer(SeasonValues.objects.all(),context={'request': request}, many=True).data,
+        }
             
         sort_data = {
             "Newest" : { "is_applied" : sort_type == "Newest" },
