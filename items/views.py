@@ -47,11 +47,11 @@ class GetItemList(generics.ListAPIView) :
         if season_filter:
             filters = filters | Q(season_filter__in=SeasonValues.objects.filter(title__in=season_filter))
 
-        sleeve_length_filter = self.request.GET.get('sleeve_length_filter', None)
+        sleeve_length_filter = self.request.GET.getlist('sleeve_length_filter', None)
         if sleeve_length_filter:
             filters = filters | Q(sleeve_length_filter__in=SleeveLengthValues.objects.filter(title__in=sleeve_length_filter))
 
-        brand_filter = self.request.GET.get('brand_filter', None)
+        brand_filter = self.request.GET.getlist('brand_filter', None)
         if brand_filter:
             filters = filters | Q(brand_filter__in=BrandValues.objects.filter(title__in=brand_filter))
 
@@ -73,11 +73,11 @@ class GetItemList(generics.ListAPIView) :
         }
 
         if sort_type == "Price_Asc" :
-            queryset = queryset.filter(filters).order_by("discount_price")
+            queryset = queryset.filter(filters).distinct().order_by("discount_price")
         elif sort_type == "Price_Desc" :
-            queryset = queryset.filter(filters).order_by("-discount_price")
+            queryset = queryset.filter(filters).distinct().order_by("-discount_price")
         else :
-            queryset = queryset.filter(filters).order_by("-created_at")
+            queryset = queryset.filter(filters).distinct().order_by("-created_at")
 
         serializer = ItemSerializer(queryset,context={'request': request}, many=True)
         return Response({"items_list":serializer.data , "filter_data" : filter_data , "sort_data" : sort_data})
