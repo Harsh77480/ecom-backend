@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import *
 
+
 class ItemSerializer(serializers.ModelSerializer) : 
     image = serializers.SerializerMethodField()
     class Meta : 
@@ -13,6 +14,14 @@ class ItemSerializer(serializers.ModelSerializer) :
                     return self.context['request'].build_absolute_uri(instance.image.url)
         else:
             return None
+
+class CategorySerializer(serializers.ModelSerializer) : 
+    items = serializers.SerializerMethodField()
+    class Meta : 
+        model = Category 
+        fields = ( 'id', 'title1','title2','image','items')
+    def get_items(self,instance) : 
+        return ItemSerializer(Item.objects.filter(category = instance)[:2],context={'request': self.context['request']},many=True).data 
 
 class OccasionValuesSerializer(serializers.ModelSerializer) : 
     is_applied = serializers.SerializerMethodField()

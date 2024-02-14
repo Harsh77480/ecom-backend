@@ -20,10 +20,11 @@ class GetItemList(generics.ListAPIView) :
     serializer_class = ItemSerializer
     queryset = Item.objects.all() 
     
-    def list(self, request):
+    def list(self, request ,id):
 
         queryset = self.get_queryset()
-        
+        queryset = queryset.filter(category__id = id)
+
         filters = Q()
         occasion_filters = self.request.GET.getlist('occasion_filter', None)
         if occasion_filters : 
@@ -82,3 +83,12 @@ class GetItemList(generics.ListAPIView) :
         return Response({"items_list":serializer.data , "filter_data" : filter_data , "sort_data" : sort_data})
     
 
+class GetCategoryList(generics.ListAPIView) : 
+    serializer_class = CategorySerializer
+    queryset = Category.objects.all().order_by("-created_at")
+    
+    def list(self, request):
+        queryset = self.get_queryset()
+        serializer = CategorySerializer(queryset,context={'request': request}, many=True)
+        return Response({"categories_list":serializer.data})
+    

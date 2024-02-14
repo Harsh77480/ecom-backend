@@ -8,8 +8,10 @@ class Category(models.Model):
     title1 = models.CharField(max_length=12)
     title2 = models.CharField(max_length=12)
     created_at = models.DateTimeField(auto_now_add=True)    
+    image = models.FileField(upload_to='item_images/',null=True)
+
     def __str__ (self) :
-        return self.title
+        return self.title1
     def clean(self) :
         super().clean()
         if len(self.title1) > 12 :
@@ -98,8 +100,8 @@ class Item(models.Model) :
     season_filter = models.ManyToManyField(to=SeasonValues,blank=True)
     fabric_filter = models.ManyToManyField(to=FabricValues,blank=True)
     pattern_filter = models.ManyToManyField(to=PatternValues,blank=True)
-
-    # cover = models.FileField 
+    
+    category = models.ForeignKey(Category,on_delete=models.CASCADE,null=True,blank=True)
 
     original_price = models.PositiveIntegerField(default=0)
     discount_price = models.PositiveIntegerField(default=0)
